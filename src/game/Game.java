@@ -24,6 +24,8 @@ public class Game {
      */
     public void addPlayer(Player player) {
       // TODO: Votre code ici
+        List<CoinState> list = new ArrayList<>();
+        history.put(player, list);
     }
 
     /**
@@ -31,6 +33,14 @@ public class Game {
      */
     public void play() {
       // TODO: Votre code ici
+        Rules rule = new Rules();
+        for(Player p: history.keySet()){
+            Coin coin = new Coin();
+            while(!rule.checkWin(history.get(p))){
+                p.play(coin);
+                history.get(p).add(coin.getState());
+            }
+        }
     }
 
     /**
@@ -40,7 +50,43 @@ public class Game {
      */
     public Statistics getStatistics() {
       // TODO: Votre code ici
-      return null;
+        Map<Player, List<CoinState>> historyPrec = this.history;
+        float nbToWin = 0;
+        int nbMin = 0;
+        int nbMax = 0;
+        int nbTotalLancer = 0;
+        for(Player p : historyPrec.keySet()){
+            nbToWin += historyPrec.get(p).size();
+            nbTotalLancer += historyPrec.get(p).size();
+        }
+
+        nbToWin = nbToWin / historyPrec.size();
+        nbMin = nbMinWin(historyPrec);
+        nbMax = nbMaxWin(historyPrec);
+
+        return new Statistics(nbToWin, nbMin, nbMax, nbTotalLancer);
+    }
+
+    private int nbMinWin(Map<Player, List<CoinState>> historyPrec){
+        Player p1 = (Player)historyPrec.keySet().toArray()[0];
+        int min = historyPrec.get(p1).size();
+        for(Player p: historyPrec.keySet()){
+            if(historyPrec.get(p).size() < min){
+                min = historyPrec.get(p).size();
+            }
+        }
+        return min;
+    }
+
+    private int nbMaxWin(Map<Player, List<CoinState>> historyPrec){
+        Player p1 = (Player)historyPrec.keySet().toArray()[0];
+        int max = historyPrec.get(p1).size();
+        for(Player p: historyPrec.keySet()){
+            if(historyPrec.get(p).size() > max){
+                max = historyPrec.get(p).size();
+            }
+        }
+        return max;
     }
 
     /**
@@ -50,7 +96,7 @@ public class Game {
      */
     public Map<Player, List<CoinState>> getHistory() {
       // TODO: Votre code ici
-      return null;
+      return this.history;
     }
 
 
@@ -62,7 +108,7 @@ public class Game {
      */
     public List<CoinState> getSpecificHistory(Player player) {
       // TODO: Votre code ici
-      return null;
+      return history.get(player);
     }
 
 }
